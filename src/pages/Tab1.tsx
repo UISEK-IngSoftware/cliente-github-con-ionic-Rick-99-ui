@@ -1,69 +1,46 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
-import ExploreContainer from '../components/ExploreContainer';
-import {
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardSubtitle,
-  IonCardTitle,
-  IonItem,
-  IonLabel,
-  IonList,
-  IonThumbnail,
-} from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar,IonList, useIonViewDidEnter } from '@ionic/react';
+import { useState } from 'react';
 import './Tab1.css';
+import RepoItem from '../components/RepoItem';
+import { RepositoryItem } from '../interfaces/RepositoryItem';
+import { fetchRepositories } from '../services/GithubService';
+
 
 const Tab1: React.FC = () => {
+
+  const [repos, setRepos] = useState<RepositoryItem[]>([]);
+
+  const loadRepos = async () => {
+    const reposData = await fetchRepositories();
+    setRepos(reposData);
+  };
+
+  useIonViewDidEnter(() => {
+    console.log("IionViewDidEnter - Cargando repositorios");
+    loadRepos();
+  });
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>REPOSITORIOS</IonTitle>
+          <IonTitle>Repositorios</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
         <IonHeader collapse="condense">
           <IonToolbar>
-            <IonTitle size="large">Tab 1</IonTitle>
+            <IonTitle size="large">Repositorios</IonTitle>
           </IonToolbar>
         </IonHeader>
-         <IonCard>
-      <IonCardHeader>
-        <IonCardTitle>Repositorios</IonCardTitle>
-        <IonCardSubtitle>Repositorios Agregados</IonCardSubtitle>
-      </IonCardHeader>
-      <IonCardContent>
         <IonList>
-          <IonItem>
-            <IonThumbnail slot="start">
-              <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
-            </IonThumbnail>
-            <IonLabel>Item</IonLabel>
-          </IonItem>
-
-          <IonItem>
-            <IonThumbnail slot="start">
-              <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
-            </IonThumbnail>
-            <IonLabel>Item</IonLabel>
-          </IonItem>
-
-          <IonItem>
-            <IonThumbnail slot="start">
-              <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
-            </IonThumbnail>
-            <IonLabel>Item</IonLabel>
-          </IonItem>
-
-          <IonItem lines="none">
-            <IonThumbnail slot="start">
-              <img alt="Silhouette of mountains" src="https://ionicframework.com/docs/img/demos/thumbnail.svg" />
-            </IonThumbnail>
-            <IonLabel>Item</IonLabel>
-          </IonItem>
+          {repos.map((repo, index) => (
+            <RepoItem
+            key={index}
+            repo={repo}
+            />
+          ))} 
         </IonList>
-      </IonCardContent>
-    </IonCard>
       </IonContent>
     </IonPage>
   );
