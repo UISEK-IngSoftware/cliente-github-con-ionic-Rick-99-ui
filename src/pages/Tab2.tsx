@@ -3,7 +3,7 @@ import './Tab2.css';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { RepositoryItem } from '../interfaces/RepositoryItem';
-import { createdRepository } from '../services/GithubService';
+import { createRepository } from '../services/GithubService';
 
 
 const Tab2: React.FC = () => {
@@ -29,7 +29,7 @@ const Tab2: React.FC = () => {
       alert('El nombre del repositorio es obligatorio.');
       return;
     }
-    createdRepository(repoFormData)
+    createRepository(repoFormData)
     .then(() => {
       history.push('/tab1');
     }).catch(() => {
