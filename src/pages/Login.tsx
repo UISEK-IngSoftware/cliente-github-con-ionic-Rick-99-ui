@@ -1,28 +1,37 @@
-import { IonButton, IonContent, IonHeader, IonIcon, IonInput, IonPage, IonText, IonTitle, IonToolbar } from "@ionic/react";
+import { IonButton, IonContent, IonHeader, IonIcon, IonInput, IonPage, IonText, IonTitle, IonToolbar, IonLoading } from "@ionic/react";
 import { logoGithub } from "ionicons/icons";
 import './Login.css';
 import { useState } from "react";
 import AuthService from "../services/AuthService";
+import { useHistory } from "react-router-dom";
 
 const Login: React.FC = () => {
 
     const [username, setUsername] = useState('');
     const [token, setToken] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const history = useHistory();
 
-const handleLogin = (e: React.FormEvent) => {
+const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!username || !token) {
         setError('Por favor ingrese su usuario y token de Github.');
         return;
     }
-
-    const success = AuthService.login(username, token);
-    if (success) {
-        window.location.href = '/tab1';
-    } else {
-        setError('Error al Iniciar Session.'); 
+    setLoading(true);
+    try {
+        const success = AuthService.login(username, token);
+        if (success) {
+            history.replace('/tab1');
+        } else {
+            setError('Error al Iniciar Session.'); 
+        }
+    } catch {
+        setError('Error al iniciar sesión.');
+    } finally {
+        setLoading(false);
     }
 };
 
@@ -68,14 +77,15 @@ const handleLogin = (e: React.FormEvent) => {
                         </IonText>
                     )}
                     
-                        <IonButton expand="block" type="submit">
-                            Iniciar Session
+                        <IonButton expand="block" type="submit" disabled={loading}>
+                            {loading ? 'Iniciando...' : 'Iniciar Session'}
                         </IonButton>  
                         <IonText color="medium" className="login-hits">
                             <p>Ingresa tu usuario y token de GitHub.</p>
                         </IonText>
                     </form>
                 </div>
+                <IonLoading isOpen={loading} message="Iniciando sesión..." />
             </IonContent>
         </IonPage>
     );

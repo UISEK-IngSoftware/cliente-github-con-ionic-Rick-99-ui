@@ -32,9 +32,8 @@ class AuthService {
 
     getAuthHeaders() {
         const token = this.getToken();
-        const username = this.getUsername();
-        if (token && username) {
-            return 'Basic ' + btoa(username + ':' + token);
+        if (token) {
+            return 'token ' + token;
         }
 
         return null;

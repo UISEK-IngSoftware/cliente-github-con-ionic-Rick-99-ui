@@ -14,6 +14,7 @@ import { personOutline, codeSlashOutline, addCircleOutline } from 'ionicons/icon
 import Tab1 from './pages/Tab1';
 import Tab2 from './pages/Tab2';
 import Tab3 from './pages/Tab3';
+import { useState, useEffect } from 'react';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -50,7 +51,32 @@ import Login from './pages/Login';
 setupIonicReact();
 
 const App: React.FC = () => {
-  const isAuthenticated = AuthService.isAuthenticated();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Verificar autenticación inicial
+    const checkAuth = () => {
+      const authStatus = AuthService.isAuthenticated();
+      setIsAuthenticated(authStatus);
+    };
+
+    checkAuth();
+
+    // Escuchar cambios en localStorage para actualizar el estado
+    const handleStorageChange = () => {
+      checkAuth();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // También verificar periódicamente (por si cambia en la misma pestaña)
+    const interval = setInterval(checkAuth, 1000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <IonApp>
@@ -58,6 +84,10 @@ const App: React.FC = () => {
         <IonRouterOutlet>
           <Route exact path="/login">
             <Login />
+          </Route>
+
+          <Route exact path="/">
+            {isAuthenticated ? <Redirect to="/tab1" /> : <Redirect to="/login" />}
           </Route>
 
           <Route>
@@ -72,9 +102,6 @@ const App: React.FC = () => {
                   </Route>
                   <Route path="/tab3">
                     <Tab3 />
-                  </Route>
-                  <Route exact path="/">
-                    <Redirect to="/tab1" />
                   </Route>
                 </IonRouterOutlet>
                 <IonTabBar slot="bottom">

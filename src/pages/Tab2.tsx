@@ -1,40 +1,50 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonTextarea, IonButton } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonTextarea, IonButton, IonToggle, IonLabel, IonItem, IonToast, IonLoading } from '@ionic/react';
 import './Tab2.css';
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { RepositoryItem } from '../interfaces/RepositoryItem';
 import { createRepository } from '../services/GithubService';
 
 
 const Tab2: React.FC = () => {
 
   const history = useHistory();
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastColor, setToastColor] = useState<'success' | 'danger'>('success');
 
-  const repoFormData : RepositoryItem = {
-    name: '',
-    description: '',
-    imageUrl: null,
-    owner: null,
-    language: null,
-  };
-
-  const setRepoName = (value: string) => {
-    repoFormData.name = value;
-  };
-  const setRepoDescription = (value: string) => {
-    repoFormData.description = value;
-  };
-  const saveRepository = () => {
-    if (repoFormData.name.trim() === '') {
-      alert('El nombre del repositorio es obligatorio.');
+  const saveRepository = async () => {
+    if (name.trim() === '') {
+      setToastMessage('El nombre del repositorio es obligatorio.');
+      setToastColor('danger');
+      setShowToast(true);
       return;
     }
-    createRepository(repoFormData)
-    .then(() => {
-      history.push('/tab1');
-    }).catch(() => {
-      alert('Error al crear el repositorio.');
-    });
+    setLoading(true);
+    try {
+      await createRepository(name, description, isPrivate);
+      setToastMessage('Repositorio creado exitosamente.');
+      setToastColor('success');
+      setShowToast(true);
+      // Limpiar formulario
+      setName('');
+      setDescription('');
+      setIsPrivate(false);
+      // Redirigir después de un breve delay
+      setTimeout(() => {
+        history.push('/tab1');
+      }, 1500);
+    } catch (err) {
+      setToastMessage('Error al crear el repositorio.');
+      setToastColor('danger');
+      setShowToast(true);
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,8 +69,8 @@ const Tab2: React.FC = () => {
             fill="solid"
             placeholder="Enter text"
             className="form-field"
-            value={repoFormData.name}
-            onIonChange={(e) => setRepoName(e.detail.value!)}
+            value={name}
+            onIonChange={(e) => setName(e.detail.value!)}
           ></IonInput>
 
           <IonTextarea
@@ -69,15 +79,37 @@ const Tab2: React.FC = () => {
             fill="outline"
             placeholder="Enter text"
             className="form-field"
-            value={repoFormData.description}
-            onIonChange={(e) => setRepoDescription(e.detail.value!)}
+            value={description}
+            onIonChange={(e) => setDescription(e.detail.value!)}
             rows={6}
           ></IonTextarea>
 
-          <IonButton expand='block' className='form-field' onClick={saveRepository}>
-            Guardar
-            </IonButton>
+          <IonItem className="form-field">
+            <IonLabel>Repositorio Privado</IonLabel>
+            <IonToggle
+              checked={isPrivate}
+              onIonChange={(e) => setIsPrivate(e.detail.checked)}
+              slot="end"
+            />
+          </IonItem>
+
+          <IonButton
+            expand='block'
+            className='form-field'
+            onClick={saveRepository}
+            disabled={loading}
+          >
+            {loading ? 'Creando...' : 'Crear Repositorio'}
+          </IonButton>
         </div>
+        <IonToast
+          isOpen={showToast}
+          onDidDismiss={() => setShowToast(false)}
+          message={toastMessage}
+          duration={3000}
+          color={toastColor}
+        />
+        <IonLoading isOpen={loading} message="Creando repositorio..." />
       </IonContent>
     </IonPage>
   );
