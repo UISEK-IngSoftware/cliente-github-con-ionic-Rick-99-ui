@@ -51,7 +51,7 @@ import Login from './pages/Login';
 setupIonicReact();
 
 const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(AuthService.isAuthenticated());
 
   useEffect(() => {
     // Verificar autenticación inicial

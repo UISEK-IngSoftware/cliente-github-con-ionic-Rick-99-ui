@@ -1,4 +1,5 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonTextarea, IonButton, IonToggle, IonLabel, IonItem, IonToast, IonLoading } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonTextarea, IonButton, IonToggle, IonLabel, IonItem, IonToast } from '@ionic/react';
+import LoadingSpinner from '../components/LoadingSpinner';
 import './Tab2.css';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -109,7 +110,7 @@ const Tab2: React.FC = () => {
           duration={3000}
           color={toastColor}
         />
-        <IonLoading isOpen={loading} message="Creando repositorio..." />
+        <LoadingSpinner isOpen={loading} />
       </IonContent>
     </IonPage>
   );

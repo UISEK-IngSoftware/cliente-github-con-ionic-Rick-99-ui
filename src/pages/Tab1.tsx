@@ -1,4 +1,5 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, useIonViewDidEnter, IonLoading, IonAlert, IonModal, IonInput, IonTextarea, IonItem, IonLabel, IonToggle, IonButton, IonButtons } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, useIonViewDidEnter, IonAlert, IonModal, IonInput, IonTextarea, IonItem, IonLabel, IonToggle, IonButton, IonButtons } from '@ionic/react';
+import LoadingSpinner from '../components/LoadingSpinner';
 import { useState } from 'react';
 import './Tab1.css';
 import RepoItem from '../components/RepoItem';
@@ -115,7 +116,8 @@ const Tab1: React.FC = () => {
             />
           ))}
         </IonList>
-        <IonLoading isOpen={loading} message="Cargando repositorios..." />
+
+        <LoadingSpinner isOpen={loading} />
         <IonModal isOpen={!!editingRepo} onDidDismiss={() => setEditingRepo(null)}>
           <IonHeader>
             <IonToolbar>

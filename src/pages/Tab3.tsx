@@ -1,4 +1,5 @@
-import { IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar, useIonViewDidEnter, IonLoading, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonItem, IonLabel, IonGrid, IonRow, IonCol } from '@ionic/react';
+import { IonButton, IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar, useIonViewDidEnter, IonCard, IonCardContent, IonCardHeader, IonCardSubtitle, IonCardTitle, IonItem, IonLabel, IonGrid, IonRow, IonCol } from '@ionic/react';
+import LoadingSpinner from '../components/LoadingSpinner';
 import './Tab3.css';
 import { UserInfo } from '../interfaces/UserInfo';
 import { useState } from 'react';
@@ -208,7 +209,7 @@ const Tab3: React.FC = () => {
 
 
     </IonButton>
-    <IonLoading isOpen={loading} message="Cargando información del usuario..." />
+    <LoadingSpinner isOpen={loading} />
       </IonContent>
     </IonPage>
   );
